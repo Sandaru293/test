@@ -27,9 +27,9 @@ public class CustomerDAOImpl {
         Connection connection = DBConnection.getInstance().getConnection();
 
         PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET name=?, address=? WHERE id=?");
-        pstm.setObject(1, customer.getcID());
+        pstm.setObject(1, customer.getAddress());
         pstm.setObject(2, customer.getName());
-        pstm.setObject(3, customer.getAddress());
+        pstm.setObject(3, customer.getcID());
         return (pstm.executeUpdate()>0);
 
     }
