@@ -57,11 +57,11 @@ public class ManageItemFormController implements Initializable{
     private void loadAllItems(){
 
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-
-            Statement stm = connection.createStatement();
-
-            ResultSet rst = stm.executeQuery("SELECT * FROM Item");
+//            Connection connection = DBConnection.getInstance().getConnection();
+//
+//            Statement stm = connection.createStatement();
+//
+//            ResultSet rst = stm.executeQuery("SELECT * FROM Item");
 
             ArrayList<ItemTM> alItems = new ArrayList<>();
 
