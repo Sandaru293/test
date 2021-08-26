@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.pos.AppInitializer;
+import lk.ijse.pos.dao.CustomerDAOImpl;
 import lk.ijse.pos.db.DBConnection;
 import lk.ijse.pos.view.tblmodel.CustomerTM;
 
@@ -54,22 +55,13 @@ public class ManageCustomerFormController implements Initializable {
 
         try {
 
-            Connection connection = DBConnection.getInstance().getConnection();
-            Statement stm = connection.createStatement();
-            ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
-            ArrayList<CustomerTM> alCustomers = new ArrayList<>();
+            CustomerDAOImpl customerDAO= new CustomerDAOImpl();
+            ArrayList<Customer> alCustomers= customerDAO.getAllCustomers();
 
-            while (rst.next()) {
-
-                CustomerTM customer = new CustomerTM(
-                        rst.getString(1),
-                        rst.getString(2),
-                        rst.getString(3));
-
-                alCustomers.add(customer);
-
+            ArrayList<CustomerTM> allCustomerForTable=new ArrayList<CustomerTM>();
+            for (Customer c : alCustomers){
+                allCustomerForTable.add(new CustomerTM(c.getcID(),c.getName(),c.getAddress()));
             }
-
             ObservableList<CustomerTM> olCustomers = FXCollections.observableArrayList(alCustomers);
 
             tblCustomers.setItems(olCustomers);
@@ -170,18 +162,10 @@ public class ManageCustomerFormController implements Initializable {
         if (addnew) {
 
             try {
-                Connection connection = DBConnection.getInstance().getConnection();
-
-                PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES (?,?,?,?)");
-
-                pstm.setObject(1, txtCustomerId.getText());
-                pstm.setObject(2, txtCustomerName.getText());
-                pstm.setObject(3, txtCustomerAddress.getText());
-                pstm.setObject(4, 0);
-
-                int affectedRows = pstm.executeUpdate();
-
-                if (affectedRows > 0) {
+                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
+                Customer customer = new Customer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
+                boolean b = customerDAO.addCustomer(customer);
+                if (b) {
                     loadAllCustomers();
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Unable to add new customer", ButtonType.OK).show();
@@ -193,16 +177,10 @@ public class ManageCustomerFormController implements Initializable {
         } else {
             try {
                 //Update
-                Connection connection = DBConnection.getInstance().getConnection();
-
-                PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET name=?, address=? WHERE id=?");
-                pstm.setObject(1, txtCustomerName.getText());
-                pstm.setObject(2, txtCustomerAddress.getText());
-                pstm.setObject(3, txtCustomerId.getText());
-
-                int affectedRows = pstm.executeUpdate();
-
-                if (affectedRows > 0) {
+                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
+                Customer customer = new Customer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
+                boolean b = customerDAO.u(customer);
+                if (b) {
                     loadAllCustomers();
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Unable to update the customer", ButtonType.OK).show();

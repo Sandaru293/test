@@ -23,7 +23,7 @@ public class CustomerDAOImpl {
 
     }
 
-    public boolean UpdateCustomer(Customer customer) throws SQLException {
+    public boolean updateCustomer(Customer customer) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
 
         PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET name=?, address=? WHERE id=?");
