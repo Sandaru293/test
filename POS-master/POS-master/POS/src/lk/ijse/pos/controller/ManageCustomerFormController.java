@@ -54,10 +54,8 @@ public class ManageCustomerFormController implements Initializable {
     private void loadAllCustomers() {
 
         try {
-
             CustomerDAOImpl customerDAO= new CustomerDAOImpl();
             ArrayList<Customer> alCustomers= customerDAO.getAllCustomers();
-
             ArrayList<CustomerTM> allCustomerForTable=new ArrayList<CustomerTM>();
             for (Customer c : alCustomers){
                 allCustomerForTable.add(new CustomerTM(c.getcID(),c.getName(),c.getAddress()));
@@ -121,14 +119,10 @@ public class ManageCustomerFormController implements Initializable {
             String customerID = tblCustomers.getSelectionModel().getSelectedItem().getId();
 
             try {
-                Connection connection = DBConnection.getInstance().getConnection();
-
-                PreparedStatement pstm = connection.prepareStatement("DELETE FROM Customer WHERE id=?");
-                pstm.setObject(1, customerID);
-
-                int affectedRows = pstm.executeUpdate();
-
-                if (affectedRows > 0) {
+                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
+                Customer customer = new Customer(txtCustomerId.getText());
+                boolean b = customerDAO.deleteCustomer(customerID);
+                if (b) {
                     loadAllCustomers();
                 } else {
                     Alert a = new Alert(Alert.AlertType.ERROR, "Failed to delete the customer", ButtonType.OK);
@@ -141,6 +135,9 @@ public class ManageCustomerFormController implements Initializable {
         }
 
     }
+
+    @FXML
+    private void btnSearch_OnAction(ActionEvent event) { }
 
     private void clearTextFields() {
         txtCustomerId.setText("");
@@ -179,7 +176,7 @@ public class ManageCustomerFormController implements Initializable {
                 //Update
                 CustomerDAOImpl customerDAO=new CustomerDAOImpl();
                 Customer customer = new Customer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
-                boolean b = customerDAO.u(customer);
+                boolean b = customerDAO.updateCustomer(customer);
                 if (b) {
                     loadAllCustomers();
                 } else {
