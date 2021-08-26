@@ -39,15 +39,16 @@ public class CustomerDAOImpl {
         Statement stm = connection.createStatement();
         ResultSet rst = stm.executeQuery("SELECT * FROM Customer where id=?");
         if (rst.next()){
-            return new Customer(rst.getString("id"),rst.getString("name"),rst.getString("address"));
+            return new Customer(rst.getString(1),rst.getString(2),rst.getString(3));
         }
+        return null;
     }
 
     public ArrayList<Customer> getAllCustomers() throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         Statement stm = connection.createStatement();
         ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
-        ArrayList<CustomerTM> alCustomers = new ArrayList<>();
+        ArrayList<Customer> alCustomers = new ArrayList<>();
         while (rst.next()){
             Customer customer= new Customer(rst.getString(1),
                     rst.getString(2),
