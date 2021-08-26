@@ -39,15 +39,19 @@ public class ItemDAOImpl {
         Statement stm = connection.createStatement();
         ResultSet rst = stm.executeQuery("SELECT * FROM Item where code=?");
         if (rst.next()){
-            return new Item(rst.getString("code"),rst.getBigDecimal("description"),rst.getInt("unitPrice"),rst.getString("qtyOnHand"));
+            return new Item(rst.getString(1),
+                    rst.getBigDecimal(2),
+                    rst.getInt(3),
+                    rst.getString(4));
         }
+        return null;
     }
 
     public ArrayList<Item>getAllItems() throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         Statement stm = connection.createStatement();
         ResultSet rst = stm.executeQuery("SELECT * FROM Item");
-        ArrayList<ItemTM> alItems = new ArrayList<>();
+        ArrayList<Item> alItems = new ArrayList<>();
         while (rst.next()){
             Item item= new Item(rst.getString(1),
                     rst.getString(2),
