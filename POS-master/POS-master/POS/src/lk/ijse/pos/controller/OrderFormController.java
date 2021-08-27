@@ -348,7 +348,6 @@ public class OrderFormController implements Initializable {
                     connection.rollback();
                     return;
                 }
-
             }
 
             connection.commit();
@@ -371,7 +370,6 @@ public class OrderFormController implements Initializable {
                 Logger.getLogger(OrderFormController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 
     private Date parseDate(String date) {
