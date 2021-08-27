@@ -1,51 +1,43 @@
 package lk.ijse.pos.dao;
 
+import lk.ijse.pos.db.DBConnection;
+import lk.ijse.pos.model.Orders;
+
 import java.sql.*;
 import java.util.ArrayList;
 
 public class OrderDAOImpl {
-    public boolean addOrder(Orders orders) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("INSERT INTO Orders VALUES (?,?,?)");
-        pstm.setObject(1, orders.getId());
-        pstm.setObject(2, orders.getDate());
-        pstm.setObject(3, orders.getCustomerId());
-        return (pstm.executeUpdate()>0);
+    public boolean addOrder(Orders orders) throws Exception {
+        String sql = "INSERT INTO Orders VALUES (?,?,?)";
+        return CrudUtil.executeUpdate(sql,orders.getId(),orders.getDate(),orders.getCustomerId());
     }
 
-    public boolean deleteOrder(String id) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("DELETE FROM Orders WHERE id=?");
-        pstm.setObject(1, id);
-        return (pstm.executeUpdate()>0);
+    public boolean deleteOrder(String id) throws Exception {
+        String sql ="DELETE FROM Orders WHERE id=?";
+        return CrudUtil.executeUpdate(sql, id);
+
     }
 
-    public boolean updateOrder(Orders orders) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("UPDATE Orders SET date=?, customerId=? WHERE id=?");
-        pstm.setObject(1, orders.getDate());
-        pstm.setObject(2, orders.getCustomerId());
-        pstm.setObject(3, orders.getId());
-        return (pstm.executeUpdate()>0);
+    public boolean updateOrder(Orders orders) throws Exception {
+        String sql = "UPDATE Orders SET date=?, customerId=? WHERE id=?";
+        return CrudUtil.executeUpdate(sql,orders.getDate(),orders.getCustomerId(),orders.getId());
     }
 
-    public Orders searchOrder(String id) throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        Statement stm = connection.createStatement();
-        ResultSet rst = stm.executeQuery("SELECT * FROM Orders where id=?");
+    public Orders searchOrder(String id) throws Exception {
+        String sql ="SELECT * FROM Orders where id=?";
+        ResultSet rst = CrudUtil.executeQuery(sql, id);
         if (rst.next()){
-            return new Orders(rst.getString(1),rst.getString(2),rst.getString(3));
+            return new Orders(rst.getString(1),rst.getDate(2),rst.getString(3));
         }
         return null;
     }
 
-    public ArrayList<Orders> getAllOrders() throws SQLException {
-        Connection connection = DBConnection.getInstance().getConnection();
-        Statement stm = connection.createStatement();
-        ResultSet rst = stm.executeQuery("SELECT * FROM Orders");
+    public ArrayList<Orders> getAllOrders() throws Exception {
+        String sql = "SELECT * FROM Orders";
+        ResultSet rst = CrudUtil.executeQuery(sql);
         ArrayList<Orders> allOrders = new ArrayList<>();
         while (rst.next()) {
-            allOrders.add(new Orders(rst.getString(1), rst.getString(2), rst.getString(3)));
+            allOrders.add(new Orders(rst.getString(1), rst.getDate(2), rst.getString(3)));
         }
 
         return allOrders;
