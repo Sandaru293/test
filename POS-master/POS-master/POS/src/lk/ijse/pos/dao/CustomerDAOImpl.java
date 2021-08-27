@@ -13,12 +13,12 @@ public class CustomerDAOImpl {
     }
 
     public boolean deleteCustomer(String id) throws Exception {
-        String sql ="DELETE FROM Customer WHERE id=?";
+        String sql ="DELETE FROM Customer WHERE cId=?";
         return CrudUtil.executeUpdate(sql, id);
     }
 
     public boolean updateCustomer(Customer customer) throws Exception {
-        String sql = "UPDATE Customer SET name=?, address=? WHERE id=?";
+        String sql = "UPDATE Customer SET name=?, address=? WHERE cId=?";
         return CrudUtil.executeUpdate(sql, customer.getName(), customer.getAddress(), customer.getcID());
     }
 
