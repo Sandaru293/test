@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class OrderDetailsDAOImpl {
-    public boolean addOrderDetail(OrderDetails orderDetails) throws SQLException {
+    public boolean addOrderDetails(OrderDetails orderDetails) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement pstm = connection.prepareStatement("INSERT INTO OrderDetails  VALUES (?,?,?,?)");
         pstm.setObject(1, orderDetails.getOrderId());
@@ -14,14 +14,14 @@ public class OrderDetailsDAOImpl {
         return (pstm.executeUpdate()>0);
     }
 
-    public boolean deleteOrderDetail(String id) throws SQLException {
+    public boolean deleteOrderDetails(String id) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement pstm = connection.prepareStatement("DELETE FROM OrderDetails  WHERE orderId=?");
         pstm.setObject(1, id);
         return (pstm.executeUpdate()>0);
     }
 
-    public boolean updateOrderDetail(OrderDetails orderDetails) throws SQLException {
+    public boolean updateOrderDetails(OrderDetails orderDetails) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement pstm = connection.prepareStatement("UPDATE OrderDetails SET itemCode=?, qty=? , unitPrice=? WHERE orderId=?");
         pstm.setObject(1, orderDetails.getItemCode());
