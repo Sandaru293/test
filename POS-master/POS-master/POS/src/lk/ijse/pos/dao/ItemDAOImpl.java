@@ -23,6 +23,12 @@ public class ItemDAOImpl {
         return CrudUtil.executeUpdate(sql,item.getDescription(),new BigDecimal(String.valueOf(item.getUnitPrice())),item.getQtyOnHand(),item.getCode());
     }
 
+    public boolean updateItemQtyOnHand(String code, int qtyOnHand) throws Exception {
+        String sql = "UPDATE Item SET qtyOnHand=? WHERE code=?";
+        return CrudUtil.executeUpdate(sql,qtyOnHand,code);
+
+    }
+
     public Item searchItem(String id) throws Exception {
         String sql = "SELECT * FROM Item where code=?";
         ResultSet rst = CrudUtil.executeQuery(sql, id);
