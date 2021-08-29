@@ -1,6 +1,5 @@
 package lk.ijse.pos.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -10,46 +9,40 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.pos.AppInitializer;
 import lk.ijse.pos.dao.ItemDAOImpl;
-import lk.ijse.pos.db.DBConnection;
+import lk.ijse.pos.model.Item;
 import lk.ijse.pos.view.tblmodel.ItemTM;
-
+import javafx.scene.control.TableView;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author : Sanu Vithanage
- * @since : 0.1.0
- **/
-
-
-public class ManageItemFormController implements Initializable{
-
-    @FXML
-    private JFXTextField txtItemCode;
-    @FXML
-    private JFXTextField txtDescription;
-    @FXML
-    private JFXTextField txtUnitPrice;
-    @FXML
-    private JFXTextField txtQty;
+public class ManageItemFormController implements Initializable {
     @FXML
     private AnchorPane root;
+
+    @FXML
+    private TextField txtItemCode;
+
+    @FXML
+    private TextField txtDescription;
+
+    @FXML
+    private TextField txtUnitPrice;
+
+    @FXML
+    private TextField txtQty;
+
     @FXML
     private TableView<ItemTM> tblItems;
 
@@ -58,15 +51,15 @@ public class ManageItemFormController implements Initializable{
     private void loadAllItems(){
 
         try {
-            ItemDAOImpl itemDAO=new ItemDAOImpl();
-            ArrayList<Item>alItems= itemDAO.getAllItems();
-            ArrayList<ItemTM> allItemsForTable = new ArrayList<>();
-            for (Item i : alItems){
+            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            ArrayList<Item> allItems = itemDAO.getAllItems();
+            ArrayList<ItemTM> allItemsForTable= new ArrayList<>();
+
+            for (Item i : allItems) {
                 allItemsForTable.add(new ItemTM(i.getCode(),i.getDescription(),i.getUnitPrice(),i.getQtyOnHand()));
             }
 
-            ObservableList<ItemTM> olItems = FXCollections.observableArrayList(alItems);
-
+            ObservableList<ItemTM> olItems = FXCollections.observableArrayList(allItemsForTable);
             tblItems.setItems(olItems);
 
         } catch (Exception ex) {
@@ -106,7 +99,6 @@ public class ManageItemFormController implements Initializable{
                 txtQty.setText(newValue.getQtyOnHand() + "");
 
                 addNew = false;
-
             }
         });
     }
@@ -138,10 +130,10 @@ public class ManageItemFormController implements Initializable{
         if (addNew){
 
             try {
-                ItemDAOImpl itemDAO =new ItemDAOImpl();
-                Item item=new Item(txtItemCode.getText(),txtDescription.getText(), new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
-                boolean b = itemDAO.addItem(item);
-                if (b){
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
+                boolean isAdded = itemDAO.addItem(item);
+                if (isAdded){
                     loadAllItems();
                 }else{
                     new Alert(Alert.AlertType.ERROR, "Failed to add the item", ButtonType.OK).show();
@@ -154,10 +146,10 @@ public class ManageItemFormController implements Initializable{
         }else{
 
             try {
-                ItemDAOImpl itemDAO =new ItemDAOImpl();
-                Item item=new Item(txtItemCode.getText(),txtDescription.getText(), new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
-                boolean b = itemDAO.updateItem(item);
-                if (b){
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
+                boolean isUpdated = itemDAO.updateItem(item);
+                if (isUpdated){
                     loadAllItems();
                 }else{
                     new Alert(Alert.AlertType.ERROR, "Failed to update the item", ButtonType.OK).show();
@@ -165,11 +157,7 @@ public class ManageItemFormController implements Initializable{
             } catch (Exception ex) {
                 Logger.getLogger(ManageItemFormController.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-
         }
-
-
     }
 
     @FXML
@@ -180,10 +168,9 @@ public class ManageItemFormController implements Initializable{
         String code = tblItems.getSelectionModel().getSelectedItem().getCode();
 
         try {
-            ItemDAOImpl itemDAO =new ItemDAOImpl();
-            Item item=new Item(txtItemCode.getText());
-            boolean b = itemDAO.deleteItem(code);
-            if (b){
+            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            boolean isDeleted = itemDAO.deleteItem(code);
+            if (isDeleted){
                 loadAllItems();
             }else{
                 new Alert(Alert.AlertType.ERROR,"Unable to delete the customer", ButtonType.OK).show();
@@ -192,5 +179,4 @@ public class ManageItemFormController implements Initializable{
             Logger.getLogger(ManageItemFormController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 }
