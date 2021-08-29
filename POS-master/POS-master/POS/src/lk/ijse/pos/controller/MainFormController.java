@@ -21,11 +21,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * @author : Sanu Vithanage
- * @since : 0.1.0
- **/
-
 public class MainFormController implements Initializable {
 
     @FXML
@@ -43,9 +38,6 @@ public class MainFormController implements Initializable {
     @FXML
     private Label lblDescription;
 
-    /**
-     * Initializes the controller class.
-     */
     public void initialize(URL url, ResourceBundle rb) {
         FadeTransition fadeIn = new FadeTransition(Duration.millis(2000), root);
         fadeIn.setFromValue(0.0);
@@ -55,9 +47,9 @@ public class MainFormController implements Initializable {
 
     @FXML
     private void playMouseExitAnimation(MouseEvent event) {
-        if (event.getSource() instanceof ImageView){
+        if (event.getSource() instanceof ImageView) {
             ImageView icon = (ImageView) event.getSource();
-            ScaleTransition scaleT =new ScaleTransition(Duration.millis(200), icon);
+            ScaleTransition scaleT = new ScaleTransition(Duration.millis(200), icon);
             scaleT.setToX(1);
             scaleT.setToY(1);
             scaleT.play();
@@ -70,10 +62,10 @@ public class MainFormController implements Initializable {
 
     @FXML
     private void playMouseEnterAnimation(MouseEvent event) {
-        if (event.getSource() instanceof ImageView){
+        if (event.getSource() instanceof ImageView) {
             ImageView icon = (ImageView) event.getSource();
 
-            switch(icon.getId()){
+            switch (icon.getId()) {
                 case "imgCustomer":
                     lblMenu.setText("Manage Customers");
                     lblDescription.setText("Click to add, edit, delete, search or view customers");
@@ -92,7 +84,7 @@ public class MainFormController implements Initializable {
                     break;
             }
 
-            ScaleTransition scaleT =new ScaleTransition(Duration.millis(200), icon);
+            ScaleTransition scaleT = new ScaleTransition(Duration.millis(200), icon);
             scaleT.setToX(1.2);
             scaleT.setToY(1.2);
             scaleT.play();
@@ -107,14 +99,14 @@ public class MainFormController implements Initializable {
     }
 
 
-@FXML
+    @FXML
     private void navigate(MouseEvent event) throws IOException {
-        if (event.getSource() instanceof ImageView){
+        if (event.getSource() instanceof ImageView) {
             ImageView icon = (ImageView) event.getSource();
 
             Parent root = null;
 
-            switch(icon.getId()){
+            switch (icon.getId()) {
                 case "imgCustomer":
                     root = FXMLLoader.load(this.getClass().getResource("/lk/ijse/pos/view/ManageCustomerForm.fxml"));
                     break;
@@ -128,7 +120,7 @@ public class MainFormController implements Initializable {
                     break;
             }
 
-            if (root != null){
+            if (root != null) {
                 Scene subScene = new Scene(root);
                 Stage primaryStage = (Stage) this.root.getScene().getWindow();
                 primaryStage.setScene(subScene);
@@ -144,5 +136,4 @@ public class MainFormController implements Initializable {
             }
         }
     }
-
 }
