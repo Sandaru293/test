@@ -1,6 +1,5 @@
 package lk.ijse.pos.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -11,57 +10,51 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.pos.AppInitializer;
 import lk.ijse.pos.dao.CustomerDAOImpl;
-import lk.ijse.pos.db.DBConnection;
+import lk.ijse.pos.model.Customer;
 import lk.ijse.pos.view.tblmodel.CustomerTM;
 
-
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author : Sanu Vithanage
- * @since : 0.1.0
- **/
-
 public class ManageCustomerFormController implements Initializable {
 
     boolean addnew = true;
     @FXML
     private AnchorPane root;
+
     @FXML
-    private JFXTextField txtCustomerId;
+    private TextField txtCustomerId;
+
     @FXML
-    private JFXTextField txtCustomerName;
+    private TextField txtCustomerName;
+
     @FXML
-    private JFXTextField txtCustomerAddress;
+    private TextField txtCustomerAddress;
     @FXML
     private TableView<CustomerTM> tblCustomers;
 
     private void loadAllCustomers() {
 
         try {
-            CustomerDAOImpl customerDAO= new CustomerDAOImpl();
-            ArrayList<Customer> alCustomers= customerDAO.getAllCustomers();
-            ArrayList<CustomerTM> allCustomerForTable=new ArrayList<CustomerTM>();
-            for (Customer c : alCustomers){
-                allCustomerForTable.add(new CustomerTM(c.getcID(),c.getName(),c.getAddress()));
-            }
-            ObservableList<CustomerTM> olCustomers = FXCollections.observableArrayList(alCustomers);
+            CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+            ArrayList<Customer> allCustomers = customerDAO.getAllCustomers();
+            ArrayList<CustomerTM> allCustomersForTable = new ArrayList<>();
 
+            for (Customer customer : allCustomers) {
+                allCustomersForTable.add(new CustomerTM(customer.getcID(), customer.getName(), customer.getAddress()));
+            }
+            ObservableList<CustomerTM> olCustomers = FXCollections.observableArrayList(allCustomersForTable);
             tblCustomers.setItems(olCustomers);
 
         } catch (Exception ex) {
@@ -70,11 +63,88 @@ public class ManageCustomerFormController implements Initializable {
 
     }
 
-    /**
-     * Initializes the controller class.
-     */
+    @FXML
+    void btnAddNewCustomer_OnAction(ActionEvent event) {
+        txtCustomerId.requestFocus();
+        tblCustomers.getSelectionModel().clearSelection();
+
+        addnew = true;
+    }
+
+    @FXML
+    void btnDelete_OnAction(ActionEvent event) {
+        Alert confirmAlert = new Alert(Alert.AlertType.WARNING, "Are you sure whether you want to delete the customer?", ButtonType.YES, ButtonType.NO);
+
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+
+        if (result.get() == ButtonType.YES) {
+
+            String customerID = tblCustomers.getSelectionModel().getSelectedItem().getId();
+
+            try {
+                CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+                boolean b = customerDAO.deleteCustomer(customerID);
+
+                if (b) {
+                    loadAllCustomers();
+                } else {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Failed to delete the customer", ButtonType.OK);
+                    a.show();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+    private void clearTextFields() {
+        txtCustomerId.setText("");
+        txtCustomerName.setText("");
+        txtCustomerAddress.setText("");
+    }
+
+    @FXML
+    void btnSave_OnAction(ActionEvent event) {
+        if (addnew) {
+
+            try {
+                CustomerDAOImpl dao = new CustomerDAOImpl();
+                boolean b = dao.addCustomer(new Customer(txtCustomerId.getText(), txtCustomerName.getText(), txtCustomerAddress.getText()));
+                if (b) {
+                    loadAllCustomers();
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Unable to add new customer", ButtonType.OK).show();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            try {
+                //Update
+                CustomerDAOImpl dao = new CustomerDAOImpl();
+                boolean b = dao.updateCustomer(new Customer(txtCustomerId.getText(), txtCustomerName.getText(), txtCustomerAddress.getText()));
+                if (b) {
+                    loadAllCustomers();
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Unable to update the customer", ButtonType.OK).show();
+                }
+
+
+            } catch (Exception ex) {
+                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @FXML
+    void navigateToHome(MouseEvent event) {
+        AppInitializer.navigateToHome(root, (Stage) this.root.getScene().getWindow());
+    }
+
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL location, ResourceBundle resources) {
         tblCustomers.getColumns().get(0).setStyle("-fx-alignment:center");
         tblCustomers.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         tblCustomers.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -101,94 +171,4 @@ public class ManageCustomerFormController implements Initializable {
 
         loadAllCustomers();
     }
-
-    @FXML
-    private void navigateToHome(MouseEvent event) {
-        AppInitializer.navigateToHome(root, (Stage) this.root.getScene().getWindow());
-    }
-
-    @FXML
-    private void btnDelete_OnAction(ActionEvent event) {
-
-        Alert confirmAlert = new Alert(Alert.AlertType.WARNING, "Are you sure whether you want to delete the customer?", ButtonType.YES, ButtonType.NO);
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-
-        if (result.get() == ButtonType.YES) {
-
-            String customerID = tblCustomers.getSelectionModel().getSelectedItem().getId();
-
-            try {
-                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
-                Customer customer = new Customer(txtCustomerId.getText());
-                boolean b = customerDAO.deleteCustomer(customerID);
-                if (b) {
-                    loadAllCustomers();
-                } else {
-                    Alert a = new Alert(Alert.AlertType.ERROR, "Failed to delete the customer", ButtonType.OK);
-                    a.show();
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
-    }
-
-    @FXML
-    private void btnSearch_OnAction(ActionEvent event) { }
-
-    private void clearTextFields() {
-        txtCustomerId.setText("");
-        txtCustomerName.setText("");
-        txtCustomerAddress.setText("");
-    }
-
-    @FXML
-    private void btnAddNewCustomer_OnAction(ActionEvent event) {
-        txtCustomerId.requestFocus();
-        tblCustomers.getSelectionModel().clearSelection();
-
-        addnew = true;
-    }
-
-    @FXML
-    private void btnSave_OnAction(ActionEvent event) {
-
-        if (addnew) {
-
-            try {
-                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
-                Customer customer = new Customer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
-                boolean b = customerDAO.addCustomer(customer);
-                if (b) {
-                    loadAllCustomers();
-                } else {
-                    new Alert(Alert.AlertType.ERROR, "Unable to add new customer", ButtonType.OK).show();
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } else {
-            try {
-                //Update
-                CustomerDAOImpl customerDAO=new CustomerDAOImpl();
-                Customer customer = new Customer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
-                boolean b = customerDAO.updateCustomer(customer);
-                if (b) {
-                    loadAllCustomers();
-                } else {
-                    new Alert(Alert.AlertType.ERROR, "Unable to update the customer", ButtonType.OK).show();
-                }
-
-
-            } catch (Exception ex) {
-                Logger.getLogger(ManageCustomerFormController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
-
 }
