@@ -1,9 +1,5 @@
 package lk.ijse.pos.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,7 +27,6 @@ import lk.ijse.pos.model.OrderDetails;
 import lk.ijse.pos.model.Orders;
 import lk.ijse.pos.view.tblmodel.OrderDetailTM;
 
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -45,46 +40,49 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-/**
- * @author : Sanu Vithanage
- * @since : 0.1.0
- **/
-
 public class OrderFormController implements Initializable {
 
     @FXML
-    private JFXComboBox<String> cmbCustomerID;
-    @FXML
-    private JFXComboBox<String> cmbItemCode;
-
+    private Label lblTotal;
 
     @FXML
-    private JFXTextField txtCustomerName;
+    private TextField txtOrderID;
+
     @FXML
-    private JFXTextField txtDescription;
+    private ComboBox<String> cmbCustomerID;
+
     @FXML
-    private JFXTextField txtQtyOnHand;
+    private ComboBox<String> cmbItemCode;
+
     @FXML
-    private JFXTextField txtUnitPrice;
+    private TextField txtQtyOnHand;
+
     @FXML
-    private JFXTextField txtQty;
+    private TextField txtQty;
+
+    @FXML
+    private DatePicker txtOrderDate;
+
+    @FXML
+    private TextField txtCustomerName;
+
+    @FXML
+    private TextField txtDescription;
+
+    @FXML
+    private TextField txtUnitPrice;
+
+    @FXML
+    private Button btnRemove;
+
     @FXML
     private TableView<OrderDetailTM> tblOrderDetails;
 
     private ObservableList<OrderDetailTM> olOrderDetails;
 
-    private boolean update = false;
-    @FXML
-    private JFXButton btnRemove;
-    @FXML
-    private Label lblTotal;
-    @FXML
-    private JFXTextField txtOrderID;
-    @FXML
-    private JFXDatePicker txtOrderDate;
-
     private Connection connection;
+
+    private boolean update = false;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -92,7 +90,6 @@ public class OrderFormController implements Initializable {
         try {
             connection = DBConnection.getInstance().getConnection();
 
-            // Create a day cell factory
             Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
                 public DateCell call(final DatePicker datePicker) {
                     return new DateCell() {
@@ -128,10 +125,9 @@ public class OrderFormController implements Initializable {
 
                 try {
                     CustomerDAOImpl dao = new CustomerDAOImpl();
-                    Customer customer =dao.searchCustomer(customerID);
-                    ResultSet rst = pstm.executeQuery();
+                    Customer customer = dao.searchCustomer(customerID);
 
-                    if (customer!=null) {
+                    if (customer != null) {
                         txtCustomerName.setText(customer.getName());
                     }
 
@@ -159,10 +155,10 @@ public class OrderFormController implements Initializable {
                 }
 
                 try {
-                    ItemDAOImpl itemDAO =new ItemDAOImpl();
-                    Item item= itemDAO.searchItem(itemCode);
+                    ItemDAOImpl itemDAO = new ItemDAOImpl();
+                    Item item = itemDAO.searchItem(itemCode);
 
-                    if (item!=null) {
+                    if (item != null) {
                         String description = item.getDescription();
                         double unitPrice = item.getUnitPrice().doubleValue();
                         int qtyOnHand = item.getQtyOnHand();
@@ -216,36 +212,39 @@ public class OrderFormController implements Initializable {
                     btnRemove.setDisable(true);
                     return;
                 }
-
                 update = true;
                 String itemCode = currentRow.getItemCode();
                 btnRemove.setDisable(false);
 
                 cmbItemCode.getSelectionModel().select(itemCode);
                 txtQty.setText(currentRow.getQty() + "");
-
             }
         });
-
         btnRemove.setDisable(true);
-
     }
 
-    private void loadAllData() throws Exception {
+    private void loadAllData() throws SQLException {
+        try {
+            CustomerDAOImpl dao = new CustomerDAOImpl();
+            ArrayList<Customer> allCustomers = dao.getAllCustomers();
 
-        CustomerDAOImpl dao =new CustomerDAOImpl();
-        ArrayList<Customer> alCustomers= dao.getAllCustomers();
-        cmbCustomerID.getItems().removeAll(cmbCustomerID.getItems());
-        for (Customer customer : alCustomers) {
-            String id = customer.getcID();
-            cmbCustomerID.getItems().add(id);
-        }
-        ItemDAOImpl itemDAO = new ItemDAOImpl();
-        ArrayList<Item> alItems= itemDAO.getAllItems();
-        cmbItemCode.getItems().removeAll(cmbItemCode.getItems());
-        for (Item item : alItems) {
-            String itemCode = item.getCode();
-            cmbItemCode.getItems().add(itemCode);
+            cmbCustomerID.getItems().removeAll(cmbCustomerID.getItems());
+
+            for (Customer customer : allCustomers) {
+                String id = customer.getcID();
+                cmbCustomerID.getItems().add(id);
+            }
+
+            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            ArrayList<Item> allItems = itemDAO.getAllItems();
+
+            cmbItemCode.getItems().removeAll(cmbItemCode.getItems());
+            for (Item item : allItems) {
+                String itemCode = item.getCode();
+                cmbItemCode.getItems().add(itemCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -315,39 +314,30 @@ public class OrderFormController implements Initializable {
             connection.setAutoCommit(false);
 
             OrderDAOImpl orderDAO = new OrderDAOImpl();
-            Orders orders=new Orders(txtOrderID.getText(),
-                    parseDate(txtOrderDate.getEditor().getText()),
-                    cmbCustomerID.getSelectionModel().getSelectedItem());
-            boolean b1=orderDAO.addOrder(orders);
+            Orders orders = new Orders(txtOrderID.getText(),parseDate(txtOrderDate.getEditor().getText()),cmbCustomerID.getSelectionModel().getSelectedItem());
+            boolean b1 = orderDAO.addOrder(orders);
+            System.out.println("Order State :"+b1);
             if (!b1) {
                 connection.rollback();
                 return;
             }
 
             OrderDetailsDAOImpl orderDetailsDAO = new OrderDetailsDAOImpl();
+            for (OrderDetailTM orderDetailTM : olOrderDetails) {
 
-            for (OrderDetailTM orderDetail : olOrderDetails) {
-                OrderDetails orderDetails= new OrderDetails(txtOrderID.getText(),orderDetail.getItemCode(),orderDetail.getQty(),new BigDecimal(orderDetail.getUnitPrice()));
+                OrderDetails orderDetails = new OrderDetails(
+                        txtOrderID.getText(),
+                        orderDetailTM.getItemCode(),
+                        orderDetailTM.getQty(),
+                        new BigDecimal(orderDetailTM.getUnitPrice()));
+
                 boolean b2 = orderDetailsDAO.addOrderDetails(orderDetails);
-
+                System.out.println("Order Details State :"+b2);
                 if (!b2) {
                     connection.rollback();
                     return;
                 }
-                int qtyOnHand = 0;
 
-                ItemDAOImpl itemDAO = new ItemDAOImpl();
-                Item item = itemDAO.searchItem(OrderDetails.getItemCode());
-                if (item!=null) {
-                    qtyOnHand = item.getQtyOnHand();
-                }
-                ItemDAOImpl itemDAO1 = new ItemDAOImpl();
-                boolean b= itemDAO1.updateItemQtyOnHand(orderDetail.getItemCode(), orderDetail.getQty());
-
-                if (!b) {
-                    connection.rollback();
-                    return;
-                }
             }
 
             connection.commit();
@@ -370,6 +360,7 @@ public class OrderFormController implements Initializable {
                 Logger.getLogger(OrderFormController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
     }
 
     private Date parseDate(String date) {
@@ -382,5 +373,4 @@ public class OrderFormController implements Initializable {
             return null;
         }
     }
-
 }
