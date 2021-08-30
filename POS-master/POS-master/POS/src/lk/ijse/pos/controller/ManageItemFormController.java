@@ -55,7 +55,7 @@ public class ManageItemFormController implements Initializable {
 
         try {
             //ItemDAOImpl itemDAO = new ItemDAOImpl();
-            ArrayList<Item> allItems = itemDAO.getAllItems();
+            ArrayList<Item> allItems = itemDAO.getAll();
             ArrayList<ItemTM> allItemsForTable= new ArrayList<>();
 
             for (Item i : allItems) {
@@ -135,7 +135,7 @@ public class ManageItemFormController implements Initializable {
             try {
                 //ItemDAOImpl itemDAO = new ItemDAOImpl();
                 Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
-                boolean isAdded = itemDAO.addItem(item);
+                boolean isAdded = itemDAO.add(item);
                 if (isAdded){
                     loadAllItems();
                 }else{
@@ -151,7 +151,7 @@ public class ManageItemFormController implements Initializable {
             try {
                 //ItemDAOImpl itemDAO = new ItemDAOImpl();
                 Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
-                boolean isUpdated = itemDAO.updateItem(item);
+                boolean isUpdated = itemDAO.update(item);
                 if (isUpdated){
                     loadAllItems();
                 }else{
@@ -172,7 +172,7 @@ public class ManageItemFormController implements Initializable {
 
         try {
             ItemDAOImpl itemDAO = new ItemDAOImpl();
-            boolean isDeleted = itemDAO.deleteItem(code);
+            boolean isDeleted = itemDAO.delete(code);
             if (isDeleted){
                 loadAllItems();
             }else{
