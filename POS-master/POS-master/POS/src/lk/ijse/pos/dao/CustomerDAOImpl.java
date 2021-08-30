@@ -1,11 +1,12 @@
 package lk.ijse.pos.dao;
 
+import lk.ijse.pos.dao.custom.CustomerDAO;
 import lk.ijse.pos.model.Customer;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class CustomerDAOImpl implements CustomerDAO{
+public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean add(Customer c) throws Exception {
         return CrudUtil.executeUpdate("INSERT INTO Customer VALUES (?,?,?,?)", c.getcID(),c.getName(),c.getAddress(),0);
