@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.pos.AppInitializer;
+import lk.ijse.pos.dao.ItemDAO;
 import lk.ijse.pos.dao.ItemDAOImpl;
 import lk.ijse.pos.model.Item;
 import lk.ijse.pos.view.tblmodel.ItemTM;
@@ -48,10 +49,12 @@ public class ManageItemFormController implements Initializable {
 
     private boolean addNew = true;
 
+    private final ItemDAO itemDAO =new ItemDAOImpl();
+
     private void loadAllItems(){
 
         try {
-            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            //ItemDAOImpl itemDAO = new ItemDAOImpl();
             ArrayList<Item> allItems = itemDAO.getAllItems();
             ArrayList<ItemTM> allItemsForTable= new ArrayList<>();
 
@@ -130,7 +133,7 @@ public class ManageItemFormController implements Initializable {
         if (addNew){
 
             try {
-                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                //ItemDAOImpl itemDAO = new ItemDAOImpl();
                 Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
                 boolean isAdded = itemDAO.addItem(item);
                 if (isAdded){
@@ -146,7 +149,7 @@ public class ManageItemFormController implements Initializable {
         }else{
 
             try {
-                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                //ItemDAOImpl itemDAO = new ItemDAOImpl();
                 Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
                 boolean isUpdated = itemDAO.updateItem(item);
                 if (isUpdated){
