@@ -1,10 +1,11 @@
 package lk.ijse.pos.dao;
 
+import lk.ijse.pos.dao.custom.OrderDAO;
 import lk.ijse.pos.model.Orders;
 
 import java.util.ArrayList;
 
-public class OrderDAOImpl implements OrderDAO{
+public class OrderDAOImpl implements OrderDAO {
 
 
     @Override

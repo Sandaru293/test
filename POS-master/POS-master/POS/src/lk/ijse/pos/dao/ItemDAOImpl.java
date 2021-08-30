@@ -1,11 +1,12 @@
 package lk.ijse.pos.dao;
 
+import lk.ijse.pos.dao.custom.ItemDAO;
 import lk.ijse.pos.model.Item;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class ItemDAOImpl implements ItemDAO{
+public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public boolean add(Item i) throws Exception {

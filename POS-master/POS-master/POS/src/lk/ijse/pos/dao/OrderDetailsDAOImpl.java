@@ -1,10 +1,11 @@
 package lk.ijse.pos.dao;
 
+import lk.ijse.pos.dao.custom.OrderDetailsDAO;
 import lk.ijse.pos.model.OrderDetails;
 
 import java.util.ArrayList;
 
-public class OrderDetailsDAOImpl implements OrderDetailsDAO{
+public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 
     @Override
     public boolean add(OrderDetails oDetails) throws Exception {
