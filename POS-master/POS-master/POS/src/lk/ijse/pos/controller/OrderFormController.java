@@ -76,7 +76,7 @@ public class OrderFormController implements Initializable {
 
     @FXML
     private Button btnRemove;
-    
+
     @FXML
     private TableView<OrderDetailTM> tblOrderDetails;
 
