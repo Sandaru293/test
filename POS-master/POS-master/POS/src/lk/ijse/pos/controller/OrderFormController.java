@@ -76,16 +76,16 @@ public class OrderFormController implements Initializable {
 
     @FXML
     private Button btnRemove;
-
+    
     @FXML
     private TableView<OrderDetailTM> tblOrderDetails;
 
     private ObservableList<OrderDetailTM> olOrderDetails;
     private boolean update = false;
 
-    CustomerBO customerBO = (CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOType.CUSTOMER);
-    ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
-    PurchaseOrderBO purchaseOrderBO = (PurchaseOrderBO) BOFactory.getInstance().getBO(BOFactory.BOType.PURCHASEORDER);
+    private final CustomerBO customerBO = (CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOType.CUSTOMER);
+    private final ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
+    private final PurchaseOrderBO purchaseOrderBO = (PurchaseOrderBO) BOFactory.getInstance().getBO(BOFactory.BOType.ORDER);
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

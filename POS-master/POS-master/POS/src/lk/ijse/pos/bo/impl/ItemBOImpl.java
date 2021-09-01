@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class ItemBOImpl implements ItemBO {
     //private final ItemDAO itemDAO =new ItemDAOImpl();
-    ItemDAO itemDAO = (ItemDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ITEM);
+    private final ItemDAO itemDAO = (ItemDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ITEM);
 
     @Override
     public boolean addItem(Item item) throws Exception {

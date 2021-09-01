@@ -19,14 +19,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PurchaseOrderBOImpl implements PurchaseOrderBO {
-//    private final ItemDAO itemDAO = new ItemDAOImpl();
-//    private final OrderDAO orderDAO = new OrderDAOImpl();
-//    private final OrderDetailsDAO orderDetailsDAO = new OrderDetailsDAOImpl();
-    CustomerDAO customerDAO = (CustomerDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.CUSTOMER);
-    ItemDAO itemDAO = (ItemDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ITEM);
-    OrderDetailsDAO orderDetailsDAO = (OrderDetailsDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDERDETAILS);
-    OrderDAO orderDAO = (OrderDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDER);
-        @Override
+    private final ItemDAO itemDAO = (ItemDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ITEM);
+    private final OrderDAO orderDAO = (OrderDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDER);
+    private final OrderDetailsDAO orderDetailsDAO = (OrderDetailsDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDERDETAILS);
+
+    @Override
         public boolean purchaseOrder(Orders order, ArrayList<OrderDetails> orderDetails) throws Exception {
             Connection connection = null;
             try {

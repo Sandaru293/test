@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class CustomerBOImpl implements CustomerBO {
     //private final CustomerDAO customerDAO = new CustomerDAOImpl();
-    CustomerDAO customerDAO = (CustomerDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.CUSTOMER);
+    private final CustomerDAO customerDAO = (CustomerDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.CUSTOMER);
 
     @Override
     public boolean addCustomer(Customer customer) throws Exception {

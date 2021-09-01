@@ -29,7 +29,7 @@ public class DAOFactory {
             case ORDERDETAILS:
                 return new OrderDetailsDAOImpl();
             case QUEREY:
-                return (SuperDAO) new QueryDAOImpl();
+                return new QueryDAOImpl();
             default:
                 return null;
         }
