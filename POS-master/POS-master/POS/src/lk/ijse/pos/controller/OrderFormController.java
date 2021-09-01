@@ -20,9 +20,10 @@ import lk.ijse.pos.bo.BOFactory;
 import lk.ijse.pos.bo.custom.CustomerBO;
 import lk.ijse.pos.bo.custom.ItemBO;
 import lk.ijse.pos.bo.custom.PurchaseOrderBO;
-import lk.ijse.pos.bo.impl.CustomerBOImpl;
-import lk.ijse.pos.bo.impl.ItemBOImpl;
-import lk.ijse.pos.bo.impl.PurchaseOrderBOImpl;
+import lk.ijse.pos.dto.CustomerDTO;
+import lk.ijse.pos.dto.ItemDTO;
+import lk.ijse.pos.dto.OrderDetailsDTO;
+import lk.ijse.pos.dto.OrdersDTO;
 import lk.ijse.pos.model.Customer;
 import lk.ijse.pos.model.Item;
 import lk.ijse.pos.model.OrderDetails;
@@ -125,7 +126,7 @@ public class OrderFormController implements Initializable {
                 }
 
                 try {
-                    Customer customer = customerBO.searchCustomer(customerID);
+                    CustomerDTO customer = customerBO.searchCustomer(customerID);
 
                     if (customer != null) {
                         txtCustomerName.setText(customer.getName());
@@ -155,7 +156,7 @@ public class OrderFormController implements Initializable {
                 }
 
                 try {
-                    Item item = itemBO.searchItem(itemCode);
+                    ItemDTO item = itemBO.searchItem(itemCode);
 
                     if (item != null) {
                         String description = item.getDescription();
@@ -224,19 +225,19 @@ public class OrderFormController implements Initializable {
 
     private void loadAllData() throws SQLException {
         try {
-            ArrayList<Customer> allCustomers = customerBO.getAllCustomers();
+            ArrayList<CustomerDTO> allCustomers = customerBO.getAllCustomers();
 
             cmbCustomerID.getItems().removeAll(cmbCustomerID.getItems());
 
-            for (Customer customer : allCustomers) {
-                String id = customer.getcID();
+            for (CustomerDTO customer : allCustomers) {
+                String id = customer.getId();
                 cmbCustomerID.getItems().add(id);
             }
 
-            ArrayList<Item> allItems = itemBO.getAllItems();
+            ArrayList<ItemDTO> allItems = itemBO.getAllItems();
 
             cmbItemCode.getItems().removeAll(cmbItemCode.getItems());
-            for (Item item : allItems) {
+            for (ItemDTO item : allItems) {
                 String itemCode = item.getCode();
                 cmbItemCode.getItems().add(itemCode);
             }
@@ -308,12 +309,27 @@ public class OrderFormController implements Initializable {
     @FXML
     private void btnPlaceOrderOnAction(ActionEvent event) {
         try {
-            Orders orders = new Orders(txtOrderID.getText(), parseDate(txtOrderDate.getEditor().getText()), cmbCustomerID.getSelectionModel().getSelectedItem());
-            ArrayList<OrderDetails> allOrderDetails = new ArrayList<>();
+//            OrdersDTO orders = new OrdersDTO(txtOrderID.getText(), parseDate(txtOrderDate.getEditor().getText()), cmbCustomerID.getSelectionModel().getSelectedItem());
+//            ArrayList<OrderDetailsDTO> allOrderDetails = new ArrayList<>();
+//            for (OrderDetailTM orderDetailTM : olOrderDetails) {
+//                allOrderDetails.add(new OrderDetailsDTO(txtOrderID.getText(), orderDetailTM.getItemCode(), orderDetailTM.getQty(), new BigDecimal(orderDetailTM.getUnitPrice())));
+//            }
+//            if (purchaseOrderBO.purchaseOrder(orders)) {//, allOrderDetails
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Order Placed", ButtonType.OK);
+//                alert.show();
+//            }
+            OrdersDTO orders = new OrdersDTO(txtOrderID.getText(), parseDate(txtOrderDate.getEditor().getText()), cmbCustomerID.getSelectionModel().getSelectedItem());
+
+            ArrayList<OrderDetailsDTO> allOrderDetails = new ArrayList<>();
+            /*Add Order Details to the Table*/
             for (OrderDetailTM orderDetailTM : olOrderDetails) {
-                allOrderDetails.add(new OrderDetails(txtOrderID.getText(), orderDetailTM.getItemCode(), orderDetailTM.getQty(), new BigDecimal(orderDetailTM.getUnitPrice())));
+                allOrderDetails.add(new OrderDetailsDTO(txtOrderID.getText(), orderDetailTM.getItemCode(), orderDetailTM.getQty(), new BigDecimal(orderDetailTM.getUnitPrice())));
             }
-            if (purchaseOrderBO.purchaseOrder(orders, allOrderDetails)) {
+
+            orders.setOrderDetails(allOrderDetails);
+
+            if (purchaseOrderBO.purchaseOrder(orders)) {
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Order Placed", ButtonType.OK);
                 alert.show();
             }
@@ -322,6 +338,7 @@ public class OrderFormController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getLocalizedMessage(), ButtonType.OK);
             alert.show();
         }
+
 
     }
 

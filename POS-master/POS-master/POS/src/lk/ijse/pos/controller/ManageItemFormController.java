@@ -17,8 +17,8 @@ import javafx.stage.Stage;
 import lk.ijse.pos.AppInitializer;
 import lk.ijse.pos.bo.BOFactory;
 import lk.ijse.pos.bo.custom.ItemBO;
-import lk.ijse.pos.bo.impl.ItemBOImpl;
 import lk.ijse.pos.dao.impl.ItemDAOImpl;
+import lk.ijse.pos.dto.ItemDTO;
 import lk.ijse.pos.model.Item;
 import lk.ijse.pos.view.tblmodel.ItemTM;
 import javafx.scene.control.TableView;
@@ -51,16 +51,15 @@ public class ManageItemFormController implements Initializable {
 
     private boolean addNew = true;
 
-    //ItemBOImpl itemBO = new ItemBOImpl();
-    ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
+    private final ItemBO itemBO = (ItemBO) BOFactory.getInstance().getBO(BOFactory.BOType.ITEM);
 
     private void loadAllItems(){
 
         try {
-            ArrayList<Item> allItems = itemBO.getAllItems();
+            ArrayList<ItemDTO> allItems = itemBO.getAllItems();
             ArrayList<ItemTM> allItemsForTable= new ArrayList<>();
 
-            for (Item i : allItems) {
+            for (ItemDTO i : allItems) {
                 allItemsForTable.add(new ItemTM(i.getCode(),i.getDescription(),i.getUnitPrice(),i.getQtyOnHand()));
             }
 
@@ -70,7 +69,6 @@ public class ManageItemFormController implements Initializable {
         } catch (Exception ex) {
             Logger.getLogger(ManageItemFormController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
 
@@ -135,7 +133,7 @@ public class ManageItemFormController implements Initializable {
         if (addNew){
 
             try {
-                Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
+                ItemDTO item = new ItemDTO(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
                 boolean isAdded = itemBO.addItem(item);
                 if (isAdded){
                     loadAllItems();
@@ -150,7 +148,7 @@ public class ManageItemFormController implements Initializable {
         }else{
 
             try {
-                Item item = new Item(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
+                ItemDTO item = new ItemDTO(txtItemCode.getText(),txtDescription.getText(),new BigDecimal(txtUnitPrice.getText()),Integer.parseInt(txtQty.getText()));
                 boolean isUpdated = itemBO.updateItem(item);
                 if (isUpdated){
                     loadAllItems();
